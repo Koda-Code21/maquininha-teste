@@ -3,93 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart Maquininha</title>
+    <title>Smart Maquininha Pro</title>
     <style>
-        :root { --pg-blue: #0079c1; --bg-gray: #f4f7f6; }
+        :root { --pg-blue: #0079c1; --status-bar: #333; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background: #ccc; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        body { background: #555; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
         
-        #app {
-            width: 320px; height: 500px; background: #1a1a1a; border-radius: 20px;
-            padding: 20px; display: flex; flex-direction: column; position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        #maquina {
+            width: 320px; height: 580px; background: #000; border-radius: 40px;
+            padding: 15px; display: flex; flex-direction: column; position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 10px #333;
+            border: 8px solid #222;
         }
 
-        .screen { flex: 1; display: none; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px; padding: 20px; text-align: center; background: white; position: relative; }
+        #status-bar { height: 25px; color: white; display: flex; justify-content: space-between; font-size: 12px; padding: 0 10px; align-items: center; }
+        #app { flex: 1; background: white; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; position: relative; }
+
+        .screen { flex: 1; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; position: relative; }
         .active { display: flex; }
 
-        .btn-reset { position: absolute; top: 10px; right: 10px; background: #eee; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; color: #555; }
+        .btn-reset { position: absolute; top: 10px; right: 10px; background: #eee; border: none; padding: 5px 8px; border-radius: 5px; font-size: 10px; cursor: pointer; color: #555; }
         
-        /* Botão Discreto de Sucesso */
-        .btn-confirm { position: absolute; bottom: 20px; background: transparent; border: 1px solid #ccc; color: #aaa; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 20px; }
+        /* Botão de confirmação discreto */
+        .btn-confirm-discreet { position: absolute; bottom: 15px; background: transparent; border: 1px solid #ccc; color: #ccc; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 18px; transition: 0.3s; }
+        .btn-confirm-discreet:active { border-color: #28a745; color: #28a745; }
 
         h2 { color: var(--pg-blue); margin-bottom: 20px; }
-        button.btn-opt { width: 100%; padding: 18px; margin: 8px 0; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; background: var(--pg-blue); color: white; font-size: 16px; }
+        button.btn-opt { width: 100%; padding: 18px; margin: 8px 0; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; background: var(--pg-blue); color: white; }
         
-        #input-display { font-size: 32px; letter-spacing: 10px; margin: 20px 0; height: 50px; color: #333; }
+        #input-display { font-size: 32px; letter-spacing: 15px; margin: 20px 0; height: 50px; color: #333; }
         .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
-        .key { padding: 15px; border: 1px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer; font-size: 18px; }
+        .key { padding: 15px; border-radius: 10px; background: #eee; cursor: pointer; font-weight: bold; border: none; }
 
-        .error-screen { background: #ffebee; color: #c62828; }
-        .success-screen { background: #e8f5e9; color: #2e7d32; }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--pg-blue); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .spinner { border: 4px solid #ddd; border-top: 4px solid var(--pg-blue); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <div id="app">
-        <div id="home" class="screen active">
-            <h2>PagBank</h2>
-            <button class="btn-opt" onclick="goToPassword('Débito')">Débito</button>
-            <button class="btn-opt" onclick="goToPassword('Crédito')">Crédito</button>
-            <button class="btn-opt" onclick="interact('outro')">Beijo</button>
+    <div id="maquina">
+        <div id="status-bar">
+            <span id="relogio">20:47</span>
+            <span>Wi-Fi 📶 | 🔋 85%</span>
         </div>
 
-        <div id="password-screen" class="screen">
-            <button class="btn-reset" onclick="interact('home')">Reiniciar</button>
-            <h3 id="pass-title">Senha</h3>
-            <div id="input-display"></div>
-            <div class="keypad">
-                <button class="key" onclick="addDigit(1)">1</button>
-                <button class="key" onclick="addDigit(2)">2</button>
-                <button class="key" onclick="addDigit(3)">3</button>
-                <button class="key" onclick="addDigit(4)">4</button>
-                <button class="key" onclick="addDigit(5)">5</button>
-                <button class="key" onclick="addDigit(6)">6</button>
-                <button class="key" onclick="addDigit(7)">7</button>
-                <button class="key" onclick="addDigit(8)">8</button>
-                <button class="key" onclick="addDigit(9)">9</button>
-                <button class="key" onclick="clearPass()">C</button>
-                <button class="key" onclick="addDigit(0)">0</button>
-                <button class="key" onclick="verifyPassword()" style="background:var(--pg-blue); color:white;">OK</button>
+        <div id="app">
+            <div id="home" class="screen active">
+                <h2>PagBank</h2>
+                <button class="btn-opt" onclick="goToPassword('Débito')">Débito</button>
+                <button class="btn-opt" onclick="goToPassword('Crédito')">Crédito</button>
+                <button class="btn-opt" onclick="interact('outro')">Beijo</button>
             </div>
-        </div>
 
-        <div id="error" class="screen error-screen">
-            <button class="btn-reset" onclick="interact('home')">Reiniciar</button>
-            <div style="font-size: 50px;">✖</div>
-            <p style="font-weight: bold; margin-top: 10px;">Senha incorreta,<br>tente novamente</p>
-        </div>
+            <div id="password-screen" class="screen">
+                <button class="btn-reset" onclick="interact('home')">Home</button>
+                <h3 id="pass-title">Senha</h3>
+                <div id="input-display"></div>
+                <div class="keypad">
+                    <button class="key" onclick="addDigit(1)">1</button><button class="key" onclick="addDigit(2)">2</button><button class="key" onclick="addDigit(3)">3</button>
+                    <button class="key" onclick="addDigit(4)">4</button><button class="key" onclick="addDigit(5)">5</button><button class="key" onclick="addDigit(6)">6</button>
+                    <button class="key" onclick="addDigit(7)">7</button><button class="key" onclick="addDigit(8)">8</button><button class="key" onclick="addDigit(9)">9</button>
+                    <button class="key" onclick="clearPass()">C</button><button class="key" onclick="addDigit(0)">0</button><button class="key" onclick="verifyPassword()" style="background:var(--pg-blue); color:white;">OK</button>
+                </div>
+            </div>
 
-        <div id="outro" class="screen">
-            <button class="btn-reset" onclick="interact('home')">Reiniciar</button>
-            <div class="spinner"></div>
-            <p style="font-size: 18px; color: #333;">Aguardando pagamento...</p>
-            <button class="btn-confirm" onclick="interact('success')">✓</button>
-        </div>
+            <div id="error" class="screen" style="background:#ffebee;">
+                <p style="color:red; font-weight:bold;">✖ Senha incorreta</p>
+                <button class="btn-opt" onclick="interact('home')">Voltar</button>
+            </div>
 
-        <div id="success" class="screen success-screen">
-            <div style="font-size: 50px;">✔</div>
-            <h2>Pagamento Aprovado</h2>
-            <p>Obrigado pela preferência!</p>
-            <button class="btn-opt" onclick="interact('home')" style="margin-top:20px;">Nova Operação</button>
+            <div id="outro" class="screen">
+                <button class="btn-reset" onclick="interact('home')">X</button>
+                <div class="spinner"></div>
+                <p>Aguardando pagamento...</p>
+                <button class="btn-confirm-discreet" onclick="interact('success')">✓</button>
+            </div>
+
+            <div id="success" class="screen" style="background:#e8f5e9;">
+                <p style="color:green; font-size:40px;">✔</p>
+                <h2>Aprovado!</h2>
+                <p> Agradecemos a preferência, até a próxima!</p>
+                <button class="btn-opt" onclick="interact('home')">Nova Venda</button>
+            </div>
         </div>
     </div>
 
     <script>
-        let currentInput = "";
+        setInterval(() => {
+            let d = new Date();
+            document.getElementById('relogio').innerText = d.getHours() + ":" + d.getMinutes().toString().padStart(2, '0');
+        }, 1000);
 
+        let currentInput = "";
         function interact(id) {
             if (navigator.vibrate) navigator.vibrate(50);
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -97,28 +102,10 @@
             currentInput = "";
             document.getElementById('input-display').innerText = "";
         }
-
-        function goToPassword(type) {
-            interact('password-screen');
-            document.getElementById('pass-title').innerText = "Senha: " + type;
-        }
-
-        function addDigit(n) {
-            if (currentInput.length < 6) {
-                currentInput += n;
-                document.getElementById('input-display').innerText = "*".repeat(currentInput.length);
-            }
-        }
-
-        function clearPass() {
-            currentInput = "";
-            document.getElementById('input-display').innerText = "";
-        }
-
-        function verifyPassword() {
-            if (navigator.vibrate) navigator.vibrate(100);
-            interact('error');
-        }
+        function goToPassword(type) { interact('password-screen'); document.getElementById('pass-title').innerText = type; }
+        function addDigit(n) { if (currentInput.length < 6) { currentInput += n; document.getElementById('input-display').innerText = "*".repeat(currentInput.length); } }
+        function clearPass() { currentInput = ""; document.getElementById('input-display').innerText = ""; }
+        function verifyPassword() { interact('error'); }
     </script>
 </body>
 </html>
