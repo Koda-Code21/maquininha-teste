@@ -18,8 +18,10 @@
         .screen { flex: 1; display: none; flex-direction: column; justify-content: center; align-items: center; border-radius: 10px; padding: 20px; text-align: center; background: white; position: relative; }
         .active { display: flex; }
 
-        /* Botão Reiniciar */
         .btn-reset { position: absolute; top: 10px; right: 10px; background: #eee; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; color: #555; }
+        
+        /* Botão Discreto de Sucesso */
+        .btn-confirm { position: absolute; bottom: 20px; background: transparent; border: 1px solid #ccc; color: #aaa; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 20px; }
 
         h2 { color: var(--pg-blue); margin-bottom: 20px; }
         button.btn-opt { width: 100%; padding: 18px; margin: 8px 0; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; background: var(--pg-blue); color: white; font-size: 16px; }
@@ -29,6 +31,7 @@
         .key { padding: 15px; border: 1px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer; font-size: 18px; }
 
         .error-screen { background: #ffebee; color: #c62828; }
+        .success-screen { background: #e8f5e9; color: #2e7d32; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--pg-blue); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
@@ -37,7 +40,7 @@
 
     <div id="app">
         <div id="home" class="screen active">
-            <h2>PagEric</h2>
+            <h2>PagBank</h2>
             <button class="btn-opt" onclick="goToPassword('Débito')">Débito</button>
             <button class="btn-opt" onclick="goToPassword('Crédito')">Crédito</button>
             <button class="btn-opt" onclick="interact('outro')">Beijo</button>
@@ -73,6 +76,14 @@
             <button class="btn-reset" onclick="interact('home')">Reiniciar</button>
             <div class="spinner"></div>
             <p style="font-size: 18px; color: #333;">Aguardando pagamento...</p>
+            <button class="btn-confirm" onclick="interact('success')">✓</button>
+        </div>
+
+        <div id="success" class="screen success-screen">
+            <div style="font-size: 50px;">✔</div>
+            <h2>Pagamento Aprovado</h2>
+            <p>Obrigado pela preferência!</p>
+            <button class="btn-opt" onclick="interact('home')" style="margin-top:20px;">Nova Operação</button>
         </div>
     </div>
 
